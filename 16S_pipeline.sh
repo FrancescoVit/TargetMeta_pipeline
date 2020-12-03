@@ -11,6 +11,17 @@
 # Contact: francesco.vitali@ibba.cnr.it
 # Github: FrancescoVit
 
+# This pipeline assumes that the following programs are installed
+# 
+# 1. FASTQC (in path) https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+# 2. MULTIQC (in path) https://multiqc.info/
+# 3. CUTADAPT (not in path) https://cutadapt.readthedocs.io/en/stable/ 
+# 4. SICKLE (in path) https://github.com/najoshi/sickle
+# 5. MICCA (in path) https://micca.readthedocs.io/en/latest/ 
+# 6. RDP classifier (not in path) https://github.com/rdpstaff/classifier 
+
+# Credits for any of the above used programs goest to the respective authors. 
+
 # DISCLAIMER: Use these command and the information contained here at your own risk!
 # I'm not responsible for loss of data
 
