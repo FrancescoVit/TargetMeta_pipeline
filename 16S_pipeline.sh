@@ -238,7 +238,7 @@ micca classify -m rdp -i $currpath/MICCA_16S_WP2/otus.fasta --rdp-gene 16srrna -
 
 # plot stats, using the file before N removal, hence there are some little differences. The command needs a fastq, but after N removal I have a fasta 
 
-micca stats -i $currpath/MICCA_burkina_transmic/ITS_burkina_assembled.fastq -o stats_full
+micca stats -i $currpath/MICCA_16S_WP2/WP2_assembled_16S.fastq -o stats_full
 
 
 
