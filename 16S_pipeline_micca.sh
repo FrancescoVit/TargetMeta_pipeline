@@ -4,33 +4,33 @@
 ########################################################################################
 
 # This is a collection of bash command, used for the initial steps of data analysis;
-# from raw sequences to OTUs. Those command are used for analysis of targeted 
+# from raw sequences to OTUs. Those command are used for analysis of targeted
 # metagenomics data on the 16S
 
 # Script author: Francesco Vitali
-# Contact: francesco.vitali@ibba.cnr.it
+# Contact: francesco.vitali@crea.gov.it
 # Github: FrancescoVit
 
 # This pipeline assumes that the following programs are installed
-# 
+#
 # 1. FASTQC (in path) https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
 # 2. MULTIQC (in path) https://multiqc.info/
-# 3. CUTADAPT (not in path) https://cutadapt.readthedocs.io/en/stable/ 
+# 3. CUTADAPT (not in path) https://cutadapt.readthedocs.io/en/stable/
 # 4. SICKLE (in path) https://github.com/najoshi/sickle
-# 5. MICCA (in path) https://micca.readthedocs.io/en/latest/ 
-# 6. RDP classifier (not in path) https://github.com/rdpstaff/classifier 
+# 5. MICCA (in path) https://micca.readthedocs.io/en/latest/
+# 6. RDP classifier (not in path) https://github.com/rdpstaff/classifier
 
-# Credits for any of the above used programs goest to the respective authors. 
+# Credits for any of the above used programs goest to the respective authors.
 
 # DISCLAIMER: Use these command and the information contained here at your own risk!
 # I'm not responsible for loss of data
 
-# DISCLAIMER: this is a continuous work in progress, both on the side of tools udes, 
-# and on the side of "scripting style". I have been working towards higher variable 
+# DISCLAIMER: this is a continuous work in progress, both on the side of tools udes,
+# and on the side of "scripting style". I have been working towards higher variable
 # use an parametrization. In some cases, absolute or relative file path are included
-# and should be changed as necessary. Moreover, also some specific file names or 
+# and should be changed as necessary. Moreover, also some specific file names or
 # references to project name should be changed from time to time
-# 
+#
 ########################################################################################
 ########################################################################################
 
@@ -41,7 +41,7 @@ core=8 # number of core to use
 
 ## Create analysis folder
 mkdir $currpath/Raw_reads
-mkdir $currpath/raw_quality 
+mkdir $currpath/raw_quality
 mkdir $currpath/renamed/
 mkdir $currpath/cutadapt/
 mkdir $currpath/quality_control/
@@ -52,7 +52,7 @@ mkdir $currpath/MICCA_16S_WP2
 
 ## Visualize quality of raw reads
 fastqc $currpath/Raw_reads*.fastq.gz -o ./raw_quality/ -t 8
-cd $currpath/raw_quality 
+cd $currpath/raw_quality
 multiqc .
 cd $currpath
 
@@ -85,9 +85,9 @@ done
 
 ## Create a file of names that will be used for looping. Only file/sample name, remove extension and R1/R2
 for i in *.fastq.gz
-do 
+do
 echo "$i" | cut -d "_" -f1 >> names.txt
-sed 'n; d' names.txt > names_single.txt  
+sed 'n; d' names.txt > names_single.txt
 done
 
 cp names_single $currpath/trimmed
@@ -102,7 +102,7 @@ cd $currpath/renamed
 while read file
 do
 	echo "Running cutadapt on file "${i}""
-	/usr/local/bin/cutadapt -g Forward=CCTACGGGNGGCWGCAG -G Reverse=GACTACNVGGGTWTCTAATCC --discard-untrimmed --pair-filter=any -o $currpath/cutadapt/"${file}_R1_cutadapt.fastq.gz" -p $currpath/cutadapt/"${file}_R2_cutadapt.fastq.gz" "${file}_R1.fastq.gz" "${file}_R2.fastq.gz" >> $currpath/quality_control/cutadapt/cutadapt_report.txt  
+	/usr/local/bin/cutadapt -g Forward=CCTACGGGNGGCWGCAG -G Reverse=GACTACNVGGGTWTCTAATCC --discard-untrimmed --pair-filter=any -o $currpath/cutadapt/"${file}_R1_cutadapt.fastq.gz" -p $currpath/cutadapt/"${file}_R2_cutadapt.fastq.gz" "${file}_R1.fastq.gz" "${file}_R2.fastq.gz" >> $currpath/quality_control/cutadapt/cutadapt_report.txt
 done < names_single.txt
 
 # --discard-untrimmed, --trimmed-only
@@ -195,12 +195,12 @@ gunzip *.fastq.gz
 
 micca mergepairs -i $currpath/trimmed/*_R1.fastq -o $currpath/MICCA_16S_WP2/WP2_assembled_16S.fastq -l 100 -d 8 -t 7
 
-# -l : minimum overlap between reads 
+# -l : minimum overlap between reads
 # -d : maximum mismatch in overlap region
 
 # Counting reads in assembled file
 
-grep -c '^@M' $currpath/MICCA_16S_WP2/WP2_assembled_16S.fastq   
+grep -c '^@M' $currpath/MICCA_16S_WP2/WP2_assembled_16S.fastq
 
 # 5277248. Read loss from QC reads to assembled is  17%
 
@@ -236,7 +236,7 @@ export RDPPATH=/home/fvitali/Documenti/Personal_PATH_folder/rdp_classifier_2.13/
 micca classify -m rdp -i $currpath/MICCA_16S_WP2/otus.fasta --rdp-gene 16srrna -o $currpath/MICCA_16S_WP2/taxa.txt
 
 
-# plot stats, using the file before N removal, hence there are some little differences. The command needs a fastq, but after N removal I have a fasta 
+# plot stats, using the file before N removal, hence there are some little differences. The command needs a fastq, but after N removal I have a fasta
 
 micca stats -i $currpath/MICCA_16S_WP2/WP2_assembled_16S.fastq -o stats_full
 
